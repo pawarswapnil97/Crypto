@@ -1,250 +1,52 @@
-import React from "react";
-import A from './A.jsx'
-class App extends React.Component{
-  render()
-  {
-    return(
-       <A fname="Pravin" lname="Kolate"/>
-    )
+import React, { useEffect, useState } from 'react';
+import './App.css';
+import axios from 'axios'
+import Coin from './Coin.jsx';
+
+
+function App() {
+  const [coins,setCoins] = useState([])
+  const [search,setSearch] = useState('')
+  useEffect(() => {
+    axios.get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=INR&order=market_cap_desc&per_page=100&page=1&sparkline=false')
+    .then(res=>{
+       setCoins(res.data)
+    
+    }).catch(error=>console.log(error))
+  })
+  const handleChange = e =>{
+    setSearch(e.target.value)
   }
-     
+  const filteredCoins = coins.filter(coin=>
+    coin.name.toLowerCase().includes(search.toLowerCase())
+    )
+  return (
+    <div className="coin-app">
+      <div className="coin-search">
+        {/* <h1 className="coin-text">Search your desired coin</h1> */}
+        <form action="">
+          <input type="text" className="coin-input" placeholder="Search Coin Name" onChange={handleChange}/>
+        </form>
+
+      </div>
+      {filteredCoins.map(coin=>{
+        return(
+          <Coin 
+          key={coin.id} 
+          name={coin.name} 
+          image={coin.image} 
+          symbol={coin.symbol}
+          marketcap={coin.market_cap}
+          price={coin.current_price}
+          pricechange={coin.price_change_percentage_24h}
+//          volume={coin.total_volume}
+          />
+        );
+      })}
+
+
+    </div>
+  );
 }
 
 export default App;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// var date=new Date().toLocaleDateString();
-// var time=new Date().toLocaleTimeString();
-// export default function App() {
-//   return (
-//     <>
-//     <h5 className='text-center mt-4'> Date:{date}</h5>
-//     <h5 className='text-center text-primary'> Time:{time}</h5>
-//     </>
-//   )
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// export default function App() {
-//   return (
-//      <>
-//      <h4>Full Stack Web Development Course</h4>
-//       <ul>
-//         <li>Front End
-//           <ul>
-//             <li>Html</li>
-//             <li>Css</li>
-//             <li>Bootstrap</li>
-//             <li>JS</li>
-//             <li>JQuery</li>
-//             <li>React JS</li>
-            
-//           </ul>
-//         </li><li>
-//           Backend
-//           <ul>
-//             <li>Python</li>
-//             <li>Node JS</li>
-//             <li>Php</li>
-//           </ul>
-//         </li>
-//       </ul>
-//      </>
-//   )
-// }
-
-
-
-
-
-
-
-
-// import React, { Component } from 'react'
-
-// export default class App extends Component {
-//   constructor(){
-//     super();
-//     this.state={
-//       name:'',
-//       nameerror:false,
-//       email:'',
-//       emailerr:false,
-//       phone:'',
-//       phoneerror:false,
-//       course:'',
-//       courseerror:false,
-//       photo:'',
-//       photoerror:false,
-//     }
-//   }
-//   changename=(event)=>{
-//     this.setState({
-//       name:event.target.value
-//     })
-//   }
-//   changeemail=(event)=>{
-//     this.setState({
-//       email:event.target.value
-//     })
-//   }
-//   changephone=(event)=>{
-//     this.setState({
-//       phone:event.target.value
-//     })
-//   }
-//   changecourse=(event)=>{
-//     this.setState({
-//       course:event.target.value
-//     })
-//   }
-//   changephoto=(event)=>{
-  
-//     this.setState({
-//     photo:event.target.files[0]
-//     })
-//   }
-//   fromsubmit=(event)=>{
-//     if(this.validation()){
-//       console.log(`${this.state.name},${this.state.email},${this.state.phone},${this.state.course},${this.state.photo}`)
-//     }
-  
-//     event.preventDefault();
-//   }
-//   validation=()=>{
-//     let error=true;
-//     if(this.state.name==''){
-//       error=false;
-//       this.setState({
-//         nameerror:"Name is Empty"
-//       })
-//     }
-//     else{
-//       this.setState({
-//         nameerror:""
-//       })
-//     }
-
-//     if(this.state.email==''){
-//       error=false;
-//       this.setState({
-//         emailerror:'Email is Empty'
-//       })
-//     }
-//     else{
-//       this.setState({
-//         emailerror:''
-//       })
-//     }
-
-//     if(this.state.phone==''){
-//       error=false;
-//       this.setState({
-//         phoneerror:"Phone is Empty"
-//       })
-//     }
-//     else{
-//       this.setState({
-//         phoneerror:''
-//       })
-//     }
-//     if(this.state.course==''){
-//       error=false;
-//       this.setState({
-//         courseerror:'Course Is Empty'
-//       })
-//     }
-//     else{
-//       this.setState({
-//         courseerror:''
-//       })
-//     }
-//     if(this.state.photo==''){
-//       error=false
-//       this.setState({
-//         photoerror:'Photo Is Empty'
-//       })
-//     }
-//     else{
-//       this.setState({
-//         photoerror:''
-//       })
-//     }
-//   }
-//   render() {
-//     return (
-//       <>
-//       <form className='bg-warning p-3' onSubmit={this.fromsubmit}>
-//         <div>
-//           <label>Your Name</label>
-//           <input type="text" value={this.state.name} className='form-control' name="name" onChange={this.changename}/>
-//           {this.state.nameerror && <div style={{color:'red'}}>{this.state.nameerror}</div>}
-//         </div>
-//         <div>
-//           <label>Your Email</label>
-//           <input type="email"  value={this.state.email}  className='form-control' name="email"  onChange={this.changeemail}/>
-//           {this.state.emailerror && <div style={{color:'red'}}>{this.state.emailerror}</div>}
-//         </div>
-//         <div>
-//           <label>Your Mobile</label>
-//           <input type="number"  value={this.state.mobile} className='form-control' name="mobile"  onChange={this.changephone}/>
-//           {this.state.phoneerror && <div style={{color:'red'}}>{this.state.phoneerror}</div>}
-//         </div>
-//         <div>
-//           <label>Your Course</label>
-//           <select className='form-control' name="course"  value={this.state.course}  onChange={this.changecourse}>
-//             <option value="">Choose Course</option>
-//             <option value="frontend">Front End</option>
-//             <option value="backend">Back End</option>
-//           </select>
-//           {this.state.courseerror && <div style={{color:'red'}}>{this.state.courseerror}</div>}
-//         </div>
-//         <div>
-//           <label>Your Photo</label>
-//           <input type="file" className='form-control' name="photo"   onChange={this.changephoto}/>
-//           {this.state.photoerror && <div style={{color:'red'}}>{this.state.photoerror}</div>}
-//         </div>
-//         <div>
-//         <button className='btn btn-primary mt-3'>SAVE FORM</button>
-//         </div>
-//       </form>
-//       </>
-//     )
-//   }
-// }
